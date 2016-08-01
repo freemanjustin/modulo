@@ -1,0 +1,53 @@
+! This should be echoed
+! So should this
+
+! i.e. the format of the NET keyword is
+! NET <ROWS> <COLUMNS> <UPDATE PROCEDURE> <MAX # OF UPDATE CYCLES>
+!     <# OF TRAINING PATTERNS> <TEMPERATURE>
+!     <DREAM FLAG>
+!     <INPUT WEIGHT FILE> <OUTPUT WEIGHT FILE>
+!     <LEARNT PATTERN FILE>
+
+
+NET 10 10 1 100 20 1 N - WEIGHT.WGT PATTERN.DAT
+  ! rows, 
+  ! columns, 
+  ! states/module, 
+  ! number of active modules/memory
+  ! update cycles (maximum), 
+  ! number of training patterns,
+  ! learning/testing flag (N or R)
+  ! input weight initialisation file (use '-' for no input file).
+  ! output to weights file.
+  ! patterns storage file
+
+! input patterns 
+! RPAT - random pattern
+! TPAT - by hand pattern
+
+TPAT
+1111111111
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+1111111111
+
+! RPAT
+
+
+NPAT            ! Give braino something to see.
+1111111111
+1000000001
+1000000001
+1000000001
+1000000001
+1000000001
+1000000001
+1000000001
+1000000001
+0000000000
