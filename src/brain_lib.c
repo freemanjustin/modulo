@@ -1,5 +1,6 @@
 #include "brain.h"
-
+int keep_going = F_FALSE;
+SDL_Event sdl_event;
 //	This function will perform updating on the neural array. The neural
 //	elements are updated only after they have all been calculated.
 void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
@@ -47,33 +48,36 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 
 
 	// malloc some memory for the temp state vectors...
-	if ( (h = (STATE_VECTOR*) malloc( sizeof(STATE_VECTOR*)*n ) ) == NULL ) 
-	{				
+	if ( (h = (STATE_VECTOR*) malloc( sizeof(STATE_VECTOR*)*n ) ) == NULL )
+	{
 	  	printf(	"\nNot enough memory for the state vectors.\n") ;
 	  	exit(1) ;
 	}
 	for ( j=0 ; j<n  ; j++ )
 	{
-		if ( ( (h+j)->states =  (int*)malloc( sizeof(int)*(p->states) ) ) == NULL ) 
-		{				
+		if ( ( (h+j)->states =  (int*)malloc( sizeof(int)*(p->states) ) ) == NULL )
+		{
 		  	printf(	"\nNot enough memory for the state vectors.\n") ;
 		  	exit(1) ;
 		}
-		else	
+		else
 		{
-			  for ( k = 0 ; k < (p->states) ; k++ )  
+			  for ( k = 0 ; k < (p->states) ; k++ )
 			  {
-					(h+j)->states[k] = 0  ;  // Initialise to 0 
+					(h+j)->states[k] = 0  ;  // Initialise to 0
 			  }
 		}
-	} 
+	}
 
 	//clearWindow();
 
+	/*
 	for( i=0 ; i<n ; i++ )
 	{
 	   display_neurone_block( p, neurone, i ,"") ;
 	}
+	*/
+	display_neurone_block( p, neurone, n ,"") ;
 
 	for ( cycles = 0 ; cycles < p->update_cycles ; cycles++ )
 	{
@@ -86,11 +90,11 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 	   p->converge_cycles = cycles + 1 ;
 
 	   cycle_difference = 0 ;
-	   
+
 
 	   	for ( j=0 ; j<n ; j++ )
 	   	{
-			for( k=0;k<n;k++)		
+			for( k=0;k<n;k++)
        		{
        			for(q=0;q<(p->states);q++)
        			{
@@ -101,7 +105,7 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 				}
 			}
 	   }	// end of the module update cycle
-	   
+
 	   //printf("\nfinished an update cycle \n");
 
 		//	square the vectors
@@ -116,15 +120,15 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 			(neurone+j)->largest = 0;
 	 	}
 	 	index[n] = 0.0;
-		
+
 		sort2((unsigned long)n, sorted_array, index);	//sort2 sorts the vectors into ascending order
-		
+
 		//printf("\n");
 		//for(j=0;j<=n;j++)
 	 	//{
 		//	printf("%f\t%f\n",index[j],sorted_array[j]);
 	 	//}
-		
+
 		if( sorted_array[ (n - (p->actives-1)) ] == sorted_array[ (n - (p->actives)) ] )
 		{
 			num_active = 0;
@@ -134,7 +138,7 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 			for(j=(p->actives-1);j>=0;j--)
 			{
 				if(sorted_array[n-j] != local_min)
-				{	
+				{
 					start = j+2;	//starting index
 					//printf("start = %d\n",start);
 					break;
@@ -170,17 +174,17 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 					num_active++;
 				}
 			}while(num_active != (p->actives));
-			
+
 		}
 		else	// if we have p->actives as many, just tag them
 		{
 			for(j=0;j<(p->actives);j++)
 			{
-				
+
 				(neurone+(int)index[(n-j)])->largest = 1;
 			}
 		}
-			
+
 		// adjust the p->actives nodes and make the rest zero
 
 		/*for(j=0;j<n;j++)
@@ -194,7 +198,7 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 			}
 		}*/
 
-	   
+
 	   for(j=0;j<n;j++)
 	   {
 			if((neurone+j)->largest == 1)
@@ -203,10 +207,10 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 				local_max = 0;
 				count = 0;
 				max_count = 0;
-				
+
 				//for(r=0;r<(p->states);r++)
 				//	printf("%d\n",(h+j)->states[r]);
-					
+
 				for(r=0;r<(p->states);r++)
 					max_vector[r] = 0;
 
@@ -214,11 +218,11 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 				// state (ie. a vector like 0220 -> randomly pick one of the '2' sites and set it to one, other elements to zero
 
 				//check each element, and find the largest, and howmany of the largest there are
-				
+
 				for(r=0;r<(p->states);r++)
 				{
 					//printf("%d\n",(h+j)->states[r]);
-					// find the max element 
+					// find the max element
 					if( ((h+j)->states[r] > local_max) )
 					{
 						local_max=(h+j)->states[r];
@@ -244,7 +248,7 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 							s++;
 						}
 					}
-					count = (int)ceil((max_count) * ran4());	// pick a random state	
+					count = (int)ceil((max_count) * ran4());	// pick a random state
 					count = max_vector[count];
 					//printf("chose to change site %d\n",count);
 					for(r=0;r<(p->states);r++)
@@ -263,7 +267,7 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 					//printf("\nmodified state vector follows\n");
 					//for(r=0;r<(p->states);r++)
 					//	printf("%d\n",(h+j)->states[r]);
-				}	
+				}
 				else
 				{
 					for(r=0;r<(p->states);r++)
@@ -280,7 +284,7 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 					}
 					(neurone+j)->l_copy_squ = 1;
 				}
-			}			
+			}
 			else
 			{
 				//printf("making the state vector equal to zero\n");
@@ -288,31 +292,36 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 				{
 					// make all of the states equal to zero
 					(h+j)->states[r]=0;
-				}	
+				}
 				(neurone+j)->l_copy_squ = 0;
 			}
 			cycle_difference += abs( ((neurone+j)->l_copy_squ) - ((neurone+j)->l_squ));
 	   		//printf("cycle_difference = %d\tl_copy_squ = %d\tl_squ = %d\n",cycle_difference,(neurone+j)->l_copy_squ,(neurone+j)->l_squ);
 	   }
 
-	   
+
 
 	   // Now update the input neural array for the next cycle
 	   //clearWindow();
 	   for ( j=0 ; j<n ; j++ )
 	   {
+			 	//keep_going = F_FALSE;
        		for(r=0;r<(p->states);r++)
        		{
-				(neurone+j)->states[r] = (h+j)->states[r];
-			}
-			display_neurone_block(p, neurone, j, sbuf) ; // this was inside the above loop in the original code
+						(neurone+j)->states[r] = (h+j)->states[r];
+					}
+					/*
+					display_neurone_block(p, neurone, j, sbuf) ; // this was inside the above loop in the original code
+					*/
 	   }
 
-	/*
-	   for(m=0;m<n;m++)
+		 display_neurone_block(p, neurone, n, sbuf) ; // this was inside the above loop in the original code
+
+/*
+	   for(int m=0;m<n;m++)
 		{
-			local_var = 0;
-			for(e=0;e<(p->states);e++)
+			int local_var = 0;
+			for(int e=0;e<(p->states);e++)
 			{
 				if( ((neurone+m)->states[e]) == 0)
 					local_var+=1;
@@ -327,14 +336,14 @@ void sync_update_npat( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 			if( (m+1) % (p->cols) == 0)
 				printf("\n");
 		}
-	*/
-	   if ( cycle_difference == 0 ) 
+*/
+	   if ( cycle_difference == 0 )
 	   {	//printf("***** converged *****\n");
 	   		break ;
 	   	}
 	}
 	//printf("\nfunction sync_update() ...done\n");
-	free( (void *) h ) ;  // Return the update memory	
+	free( (void *) h ) ;  // Return the update memory
 }
 
 
@@ -343,7 +352,7 @@ int	square_states(int* states, RUN_TIME_TYPE *p)
 {
 	int		states_squared = 0;
 	int		j;
-	
+
 	//find the length squared of the vector
 	for(j=0;j<(p->states);j++)
 	{
@@ -356,15 +365,15 @@ int	square_states(int* states, RUN_TIME_TYPE *p)
 
 int update_neural_weights( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 {
-	
+
 	int 	j, k, q, r ,n;
 
 	//printf("\n\nEntered function update_neural_weights()\n");
-	n = p->rows * p->cols ;	
+	n = p->rows * p->cols ;
 
 	// 	store the just learnt pattern, but only if
 	// 	the user specified a pattern file to go out to.
-	
+
 	// Fill in the pattern file if valid
 	if ( p->pattern.flag == F_TRUE )
 	{
@@ -382,12 +391,12 @@ int update_neural_weights( RUN_TIME_TYPE *p, NEURONE_TYPE *neurone )
 	   			{
 		       		// self interaction term??
 		         	(neurone+j)->w[k]->weight[q][r] += (int)((neurone+j)->states[q])*((neurone+k)->states[r]);
-		         	
+
 		       	}
 	       	}
 	     }
 	}
 	//printf("....\nupdated the neural weights\n....\n");
 	return( n ) ;
-	
+
 }

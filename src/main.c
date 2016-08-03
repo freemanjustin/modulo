@@ -1,7 +1,11 @@
 #include "brain.h"
 
 #define width	640
-#define height	480
+#define height	640
+
+int quit = F_FALSE;
+//Event handler
+SDL_Event sdl_event;
 
 int main( int argc, char *argv[] )
 {
@@ -485,6 +489,21 @@ int main( int argc, char *argv[] )
 	//free(active_sites);
 	//free(states_store);		//should free this memory sometime
 	//free(na);
+
+	while( !quit ){
+		//Handle events on queue
+    while( SDL_PollEvent( &sdl_event ) != 0 ){
+			if ( sdl_event.type == SDL_QUIT ) {
+				quit = F_TRUE;
+			}
+			if ( sdl_event.type == SDL_KEYDOWN ) {
+				if ( sdl_event.key.keysym.sym == SDLK_ESCAPE ) {
+					quit = F_TRUE;
+				}
+			}
+    }
+	}
+
 	SDL_Quit();
 
 	return(0) ;
