@@ -9,47 +9,45 @@
 !     <LEARNT PATTERN FILE>
 
 
-NET 10 10 1 10 20 1 N - WEIGHT.WGT PATTERN.DAT
-  ! rows, 
-  ! columns, 
-  ! states/module, 
+NET 10 10 1 64 20 1 N - WEIGHT.WGT PATTERN.DAT
+  ! rows,
+  ! columns,
+  ! states/module,
   ! number of active modules/memory
-  ! update cycles (maximum), 
+  ! update cycles (maximum),
   ! number of training patterns,
   ! learning/testing flag (N or R)
   ! input weight initialisation file (use '-' for no input file).
   ! output to weights file.
   ! patterns storage file
 
-! input patterns 
+  !keyword, NET
+  !&(p->rows), ROWS = 10
+  !&(p->cols), COLS = 10
+  !&(p->states), STATES = 1
+  !&(p->actives), ACTIVES = 10
+  !&(p->update_cycles), UPDATE_CYCLES = 20
+  !&(p->num_pats), NUM_PATS = 5
+  !dflag, DFLAG = N
+  !p->input_weight.file, -
+  !p->output_weight.file, WEIGHT.WGT
+  !p->pattern.file PATTERN.DAT
+
+! input patterns
 ! RPAT - random pattern
 ! TPAT - by hand pattern
 
 TPAT
 1111111111
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
 1111111111
-
-!TPAT
-!1111111111
-!0001110000
-!0001110000
-!0001110000
-!0001110000
-!0001110000
-!0001110000
-!0001110000
-!0001110000
-!1111111111
-
-! RPAT
+1100000011
+1100000011
+1111111111
+1111111111
+1100000011
+1100000011
+1100000011
+1100000011
 
 
 NPAT            ! Give braino something to see.
@@ -57,9 +55,9 @@ NPAT            ! Give braino something to see.
 1000000001
 1000000001
 1000000001
+1111111111
+1111111111
 1000000001
-1000000001
-1000000001
-1000000001
+1111111111
 1000000001
 0000000000

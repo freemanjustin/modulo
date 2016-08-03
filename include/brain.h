@@ -39,6 +39,7 @@
 int	window;	// stores the window id of the X11 window
 int	textWindow; // for some informative text messages
 SDL_Window *screen;
+SDL_GLContext glcontext;
 
 float	red[256];
 float	green[256];

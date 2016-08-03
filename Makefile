@@ -20,7 +20,7 @@ OBJ=	$(CSRC)/brain_lib.o \
 # compliler flags
 INC=	-I./ -I./include
 
-CFLAGS=	-O3 -finline-functions -funroll-loops -Wall
+CFLAGS=	-O0 -fsanitize=address -Wformat -Werror=format-security -Werror=array-bounds -g 
 
 CC=	gcc $(CFLAGS) $(INC)
 

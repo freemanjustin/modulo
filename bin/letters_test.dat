@@ -1,0 +1,42 @@
+! the format of the NET keyword is
+! NET <ROWS> <COLUMNS> <UPDATE PROCEDURE> <MAX # OF UPDATE CYCLES>
+!     <# OF TRAINING PATTERNS> <TEMPERATURE>
+!     <DREAM FLAG>
+!     <INPUT WEIGHT FILE> <OUTPUT WEIGHT FILE>
+!     <LEARNT PATTERN FILE>
+
+NET 10 10 1 64 20 0 R WEIGHT.WGT - PATTERN.DAT
+                    ! 4 rows and 4 columns
+                    ! non-synchronous update
+                    ! 50 update cycles (maximum)
+                    ! 0 training patterns
+                    ! temperature=0.3
+                    ! The run type is R - random inputs.
+                    ! Input weight file is DREAM.WGT .
+                    ! No output weight file.
+                    ! The list of learnt patterns is in PATTERN.DAT
+
+! If RANDIN is being used then BRAINEX will be put into random input mode.
+! A weight file must be read in. For each cycle a random pattern is
+! generated in the neural network and then allowed to settle to
+! equilibrium. The result is compared to the set of learnt patterns
+! to see if there is a match. A match is deemed to occur if the percentage
+! of matching neurones equals or excedes the value of parameter 3 in the
+! RANDIN image. At the end of the run a report is generated to see how
+! efficient we were.
+! The first parameter for the RANDIN card is the number of random inputs
+! to present the neural net with.
+! The second parameter defines the match percentage by which criteria
+! a match will be accepted. For instance, 100 means we need a perfect
+! match for acceptance, 80 means that a match of 80% will be sufficient
+! for acceptance.
+! The third parameter is the name of the file to write the report to, if
+! this file already exists then it will be appended to.
+
+RANDIN 10 100 99  REPORT.OUT
+    ! number of cycles through random inputs is 200.
+    ! To be considered a match the generated pattern will need to be at
+    ! least 98% the same as a learnt pattern.
+    ! Report will go to REPORT.OUT. If REPORT.OUT already exists
+    ! then the new report will be appended to it, otherwise
+    ! it will be created.
