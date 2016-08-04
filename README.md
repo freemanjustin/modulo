@@ -1,2 +1,2 @@
-# hopfield
+# modulo
 hopfield neural network
